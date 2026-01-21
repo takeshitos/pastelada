@@ -46,6 +46,13 @@ export function formatDate(date: string | Date): string {
 }
 
 /**
+ * Format date and time for display (alias for formatDate)
+ */
+export function formatDateTime(date: string | Date): string {
+  return formatDate(date)
+}
+
+/**
  * Get date range for common filters
  */
 export function getDateRange(period: 'today' | '7days' | 'month'): { startDate: Date; endDate: Date } {

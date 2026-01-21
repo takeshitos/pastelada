@@ -225,6 +225,76 @@ export function useAppSettingsRealtime() {
 
   return { settings, loading, error }
 }
+// Hook for fetching all flavors (including inactive) - for admin
+export function useFlavors() {
+  const [flavors, setFlavors] = useState<Tables<'flavors'>[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  const fetchFlavors = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      
+      const { data, error: fetchError } = await supabase
+        .from('flavors')
+        .select('*')
+        .order('name')
+
+      if (fetchError) {
+        throw fetchError
+      }
+
+      setFlavors(data || [])
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch flavors')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchFlavors()
+  }, [])
+
+  return { flavors, loading, error, refetch: fetchFlavors }
+}
+
+// Hook for fetching all vendors (including inactive) - for admin
+export function useVendors() {
+  const [vendors, setVendors] = useState<Tables<'vendors'>[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  const fetchVendors = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      
+      const { data, error: fetchError } = await supabase
+        .from('vendors')
+        .select('*')
+        .order('name')
+
+      if (fetchError) {
+        throw fetchError
+      }
+
+      setVendors(data || [])
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch vendors')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchVendors()
+  }, [])
+
+  return { vendors, loading, error, refetch: fetchVendors }
+}
+
 // Hook for admin authentication state
 export function useAdminAuth() {
   const [user, setUser] = useState<any>(null)

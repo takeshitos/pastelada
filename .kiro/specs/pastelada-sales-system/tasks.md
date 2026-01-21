@@ -211,7 +211,7 @@
     - **Property 3: Access control for sales page**
     - **Validates: Requirements 1.4**
 
-- [ ] 9. Implementar tela de vendas
+- [x] 9. Implementar tela de vendas
 
 
 
@@ -258,8 +258,8 @@
     - **Property 24: Form submission protection**
     - **Validates: Requirements 11.3**
 
-- [ ] 10. Implementar tela de vendas do vendedor
-  - [ ] 10.1 Criar página de vendas do vendedor (/vendas)
+- [x] 10. Implementar tela de vendas do vendedor
+  - [x] 10.1 Criar página de vendas do vendedor (/vendas)
     - Tabela com vendas do vendedor logado
     - Colunas: data/hora, total, método, status, itens
     - Formatação de valores em reais
@@ -269,14 +269,14 @@
     - **Property 8: Sales data formatting consistency**
     - **Validates: Requirements 4.2, 4.5**
 
-  - [ ] 10.3 Implementar filtros de período
+  - [x] 10.3 Implementar filtros de período
     - Filtros: hoje, 7 dias, mês
     - Busca simples por texto
     - Atualização dinâmica da lista
     - _Requirements: 4.3, 4.4_
 
-- [ ] 11. Implementar autenticação admin
-  - [ ] 11.1 Criar página de login admin (/adm/login)
+- [x] 11. Implementar autenticação admin
+  - [x] 11.1 Criar página de login admin (/adm/login)
     - Formulário email/senha
     - Integração com Supabase Auth
     - Redirecionamento após login
@@ -287,14 +287,14 @@
     - **Property 19: Authentication state consistency**
     - **Validates: Requirements 9.1, 9.2, 9.3**
 
-  - [ ] 11.3 Implementar layout admin protegido
+  - [x] 11.3 Implementar layout admin protegido
     - Verificação de autenticação
     - Layout com navegação admin
     - Logout functionality
     - _Requirements: 9.3_
 
-- [ ] 12. Implementar painel administrativo
-  - [ ] 12.1 Criar gestão de sabores
+- [x] 12. Implementar painel administrativo
+  - [x] 12.1 Criar gestão de sabores
     - CRUD completo de sabores
     - Validação de nomes únicos
     - Ativação/desativação
@@ -306,7 +306,7 @@
     - **Property 11: Flavor name uniqueness**
     - **Validates: Requirements 5.2, 5.3, 5.5**
 
-  - [ ] 12.3 Criar gestão de configurações
+  - [x] 12.3 Criar gestão de configurações
     - Edição de preço do pastel
     - Upload de QR code PIX
     - Preview de imagem
@@ -318,7 +318,7 @@
     - **Property 14: Configuration singleton**
     - **Validates: Requirements 6.1, 6.5**
 
-  - [ ] 12.5 Criar gestão de vendedores
+  - [x] 12.5 Criar gestão de vendedores
     - Listagem com status ativo/inativo
     - Edição de dados (nome, telefone, status)
     - Preferência por desativação vs exclusão
@@ -328,8 +328,8 @@
     - **Property 15: Vendor management with history preservation**
     - **Validates: Requirements 7.3, 7.4**
 
-- [ ] 13. Implementar relatórios administrativos
-  - [ ] 13.1 Criar página de relatórios
+- [x] 13. Implementar relatórios administrativos
+  - [x] 13.1 Criar página de relatórios
     - Tabela com todas as vendas
     - Filtros por sabor, vendedor, período
     - Paginação e busca
@@ -339,7 +339,7 @@
     - **Property 16: Report filtering accuracy**
     - **Validates: Requirements 8.2**
 
-  - [ ] 13.3 Implementar KPIs e métricas
+  - [x] 13.3 Implementar KPIs e métricas
     - Total de vendas
     - Total de pastéis vendidos
     - Ranking de sabores
@@ -350,8 +350,8 @@
     - **Property 17: KPI calculation correctness**
     - **Validates: Requirements 8.3**
 
-- [ ] 14. Implementar feedback visual e UX
-  - [ ] 14.1 Adicionar estados de loading
+- [x] 14. Implementar feedback visual e UX
+  - [x] 14.1 Adicionar estados de loading
     - Spinners durante requisições
     - Desabilitação de botões durante submit
     - Feedback visual em todas as interações
@@ -361,24 +361,24 @@
     - **Property 23: User feedback consistency**
     - **Validates: Requirements 11.2**
 
-  - [ ] 14.3 Implementar tratamento de erros
+  - [x] 14.3 Implementar tratamento de erros
     - Toast notifications para erros/sucessos
     - Mensagens de erro específicas
     - Fallbacks para falhas de rede
     - _Requirements: Error Handling section_
 
-- [ ] 15. Checkpoint final - Testes e validação
+- [x] 15. Checkpoint final - Testes e validação
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 16. Documentação e deploy
-  - [ ] 16.1 Criar documentação de setup
+- [x] 16. Documentação e deploy
+  - [x] 16.1 Criar documentação de setup
     - Instruções de instalação
     - Configuração de variáveis de ambiente
     - Setup do Supabase
     - Criação de usuário admin
     - _Requirements: Deployment requirements_
 
-  - [ ] 16.2 Preparar para deploy
+  - [x] 16.2 Preparar para deploy
     - Configurar build para produção
     - Otimizar assets e imagens
     - Configurar variáveis de ambiente para Vercel

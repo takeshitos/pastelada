@@ -1,0 +1,49 @@
+# Dependencies
+node_modules
+
+# Testing
+coverage
+*.test.ts
+*.test.tsx
+*.test.js
+*.test.jsx
+__tests__
+jest.config.js
+jest.setup.js
+
+# Documentation
+docs
+README.md
+*.md
+
+# Specs and planning
+.kiro
+
+# Git
+.git
+.gitignore
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment files (configured in Vercel dashboard)
+.env
+.env.local
+.env*.local
+
+# Build artifacts (will be rebuilt)
+.next
+out
+dist
+
+# TypeScript
+*.tsbuildinfo

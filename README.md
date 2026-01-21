@@ -2,37 +2,42 @@
 
 Sistema de vendas para pastelaria construído com Next.js 14, TypeScript, Tailwind CSS e Supabase.
 
-## Tecnologias
+## 🚀 Começar Agora
+
+**Novo no projeto?** Siga este guia passo a passo:
+
+### 👉 [**GUIA DE INÍCIO RÁPIDO**](docs/GUIA-INICIO-RAPIDO.md) 👈
+
+Este guia vai te levar do zero até o sistema funcionando em **30-45 minutos**:
+1. ⚙️ Configurar o Supabase (backend)
+2. 💻 Configurar o projeto localmente  
+3. 🌐 Fazer deploy na Vercel (produção)
+
+### Ou siga o fluxo rápido:
+
+```bash
+# 1. Instalar dependências
+npm install
+
+# 2. Configurar variáveis de ambiente
+cp .env.local.example .env.local
+# Edite .env.local com suas credenciais do Supabase
+
+# 3. Executar em desenvolvimento
+npm run dev
+```
+
+📖 **Precisa de mais detalhes?** Consulte:
+- [📊 Fluxo Visual de Configuração](docs/FLUXO-CONFIGURACAO.md) - Diagramas e checklist
+- [📖 Guia de Setup Completo](docs/SETUP.md) - Documentação detalhada
+
+## 🛠️ Tecnologias
 
 - **Frontend**: Next.js 14 (App Router), TypeScript, Tailwind CSS
 - **Backend**: Supabase (PostgreSQL + Auth + Storage)
 - **Testing**: Jest, React Testing Library, fast-check (Property-Based Testing)
 
-## Configuração do Ambiente
-
-### 1. Instalar Dependências
-
-```bash
-npm install
-```
-
-### 2. Configurar Variáveis de Ambiente
-
-Copie o arquivo `.env.local.example` para `.env.local` e preencha com suas credenciais do Supabase:
-
-```bash
-cp .env.local.example .env.local
-```
-
-Edite o arquivo `.env.local` com suas credenciais:
-
-```env
-NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
-```
-
-### 3. Scripts Disponíveis
+## 📋 Scripts Disponíveis
 
 ```bash
 # Desenvolvimento
@@ -78,20 +83,56 @@ npm run lint
 └── .kiro/specs/          # Especificações do projeto
 ```
 
-## Próximos Passos
+## 📚 Documentação
 
-1. Configure o banco de dados Supabase (Task 2)
-2. Implemente as interfaces de vendedor (Tasks 8-10)
-3. Implemente o painel administrativo (Tasks 11-13)
-4. Execute os testes de propriedade conforme implementa
+### 🎯 Para Começar
+- **[🚀 Guia de Início Rápido](docs/GUIA-INICIO-RAPIDO.md)** - **COMECE AQUI!** Passo a passo completo (30-45 min)
+- **[📊 Fluxo Visual de Configuração](docs/FLUXO-CONFIGURACAO.md)** - Diagramas e checklist visual
+- **[⚡ Referência Rápida](docs/QUICK-REFERENCE.md)** - Comandos e informações essenciais
 
-## Desenvolvimento
+### 📖 Guias Detalhados
+- **[📖 Guia de Setup Completo](docs/SETUP.md)** - Instalação e configuração detalhada
+- **[🚀 Guia de Deploy](docs/DEPLOYMENT.md)** - Deploy em produção na Vercel
+- **[✅ Checklist de Produção](docs/PRODUCTION-CHECKLIST.md)** - Checklist completo pré e pós-deploy
 
-Este projeto segue a metodologia de desenvolvimento orientado por especificações (Spec-Driven Development) com:
+### 🔧 Documentação Técnica
+- **[🗄️ Configuração do Banco de Dados](docs/database-setup.md)** - Detalhes sobre migrations e estrutura
+- **[🔐 Configuração Admin](docs/admin-setup.md)** - Criação de usuário administrador
+- **[📋 Especificações do Sistema](.kiro/specs/pastelada-sales-system/)** - Requisitos, design e tarefas
+
+## 🏗️ Arquitetura
+
+### Funcionalidades Principais
+
+#### Interface de Vendedor (Sem Autenticação)
+- Cadastro e seleção de vendedor
+- Registro de vendas com múltiplos sabores
+- Processamento de pagamentos (PIX e Local)
+- Visualização de histórico de vendas
+
+#### Painel Administrativo (Com Autenticação)
+- Gestão de sabores (CRUD completo)
+- Gestão de vendedores
+- Configuração de preços e QR Code PIX
+- Relatórios e KPIs de vendas
+
+### Segurança
+- Row Level Security (RLS) no banco de dados
+- APIs server-side para operações de escrita
+- Autenticação Supabase apenas para administradores
+- Separação clara entre chaves públicas e privadas
+
+## 🧪 Metodologia de Desenvolvimento
+
+Este projeto segue a metodologia de **Spec-Driven Development** com:
 
 - **Requisitos formais** usando padrões EARS
 - **Propriedades de correção** testáveis
 - **Testes baseados em propriedades** (Property-Based Testing)
 - **Testes unitários** complementares
 
-Consulte os arquivos em `.kiro/specs/pastelada-sales-system/` para detalhes completos dos requisitos, design e tarefas de implementação.
+Consulte `.kiro/specs/pastelada-sales-system/` para detalhes completos dos requisitos, design e tarefas de implementação.
+
+## 🚀 Deploy
+
+Para instruções de deploy em produção (Vercel), consulte o **[Guia de Deploy](docs/DEPLOYMENT.md)**.

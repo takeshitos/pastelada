@@ -1,7 +1,7 @@
 export interface Vendor {
   id: string
   name: string
-  phone?: string
+  phone?: string | null
   active: boolean
   created_at: string
   updated_at: string

@@ -1,9 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
 import { VendorSalesResponse, ErrorResponse } from '@/types/api'
-import { Database } from '@/types/supabase'
-
-type Tables = Database['public']['Tables']
 
 export async function GET(request: NextRequest) {
   try {

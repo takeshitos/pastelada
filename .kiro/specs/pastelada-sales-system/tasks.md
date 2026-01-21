@@ -146,18 +146,32 @@
     - **Property 9: Date range filtering**
     - **Validates: Requirements 4.1, 4.3**
 
-- [ ] 6. Checkpoint - Verificar APIs e banco
+- [x] 6. Checkpoint - Verificar APIs e banco
+
+
+
+
+
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 7. Implementar componentes base e layout
-  - [ ] 7.1 Criar componentes UI básicos
+- [x] 7. Implementar componentes base e layout
+
+
+
+
+
+  - [x] 7.1 Criar componentes UI básicos
+
+
     - Componente Toast para notificações
     - Componente LoadingSpinner
     - Componente Modal reutilizável
     - Componente Table responsivo
     - _Requirements: 11.2_
 
-  - [ ] 7.2 Implementar layout responsivo
+  - [x] 7.2 Implementar layout responsivo
+
+
     - Layout base com Tailwind CSS
     - Breakpoints para mobile/desktop
     - Navegação adaptativa
@@ -167,8 +181,15 @@
     - **Property 22: Responsive layout adaptation**
     - **Validates: Requirements 11.1**
 
-- [ ] 8. Implementar tela inicial e gestão de vendedores
-  - [ ] 8.1 Criar página inicial (/)
+- [x] 8. Implementar tela inicial e gestão de vendedores
+
+
+
+
+
+  - [x] 8.1 Criar página inicial (/)
+
+
     - Formulário de cadastro de vendedor
     - Lista de vendedores ativos
     - Validação de nome e telefone
@@ -179,7 +200,9 @@
     - **Property 2: Vendor selection and session management**
     - **Validates: Requirements 1.3**
 
-  - [ ] 8.3 Implementar proteção de rota para vendas
+  - [x] 8.3 Implementar proteção de rota para vendas
+
+
     - Verificar vendor_id no localStorage
     - Redirecionar para home se não logado
     - _Requirements: 1.4_
@@ -189,7 +212,14 @@
     - **Validates: Requirements 1.4**
 
 - [ ] 9. Implementar tela de vendas
-  - [ ] 9.1 Criar página de vendas (/vender)
+
+
+
+
+
+  - [x] 9.1 Criar página de vendas (/vender)
+
+
     - Exibir preço atual e sabores ativos
     - Controles de quantidade (+/- para cada sabor)
     - Cálculo dinâmico do total
@@ -200,19 +230,25 @@
     - **Property 5: Dynamic total calculation**
     - **Validates: Requirements 2.2**
 
-  - [ ] 9.3 Implementar modal de dados do cliente
+  - [x] 9.3 Implementar modal de dados do cliente
+
+
     - Formulário com nome (obrigatório) e telefone (opcional)
     - Validação de campos
     - Botão "Salvar e escolher pagamento"
     - _Requirements: 2.3, 2.4_
 
-  - [ ] 9.4 Implementar seleção de método de pagamento
+  - [x] 9.4 Implementar seleção de método de pagamento
+
+
     - Opções PIX e Pagamento Local
     - Modal PIX com QR code, valor e itens
     - Confirmação de pagamento
     - _Requirements: 3.1, 3.2, 3.3_
 
-  - [ ] 9.5 Implementar finalização de venda
+  - [x] 9.5 Implementar finalização de venda
+
+
     - Chamada para API /api/orders
     - Feedback de sucesso/erro
     - Opções "Outra compra" e "Sair"

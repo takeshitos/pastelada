@@ -17,6 +17,7 @@ export interface Customer {
 export interface Flavor {
   id: string
   name: string
+  price_cents: number
   active: boolean
   created_at: string
   updated_at: string

@@ -105,8 +105,10 @@ export default function SalesPage() {
   const calculateTotal = (): number => {
     if (!settings) return 0
     
-    return Object.values(cart).reduce((total, quantity) => {
-      return total + (quantity * settings.pastel_price_cents)
+    return Object.entries(cart).reduce((total, [flavorId, quantity]) => {
+      const flavor = flavors.find(f => f.id === flavorId)
+      const price = flavor?.price_cents || 0
+      return total + (quantity * price)
     }, 0)
   }
 
@@ -227,7 +229,7 @@ export default function SalesPage() {
       .filter(([_, quantity]) => quantity > 0)
       .map(([flavorId, quantity]) => {
         const flavor = flavors.find(f => f.id === flavorId)!
-        const lineTotal = quantity * (settings?.pastel_price_cents || 0)
+        const lineTotal = quantity * (flavor.price_cents || 0)
         return { flavor, quantity, lineTotal }
       })
   }
@@ -313,20 +315,6 @@ export default function SalesPage() {
           </div>
         </div>
 
-        {/* Price Display */}
-        {settings && (
-          <div className="mb-6">
-            <Card>
-              <div className="text-center py-4">
-                <p className="text-lg text-gray-600 mb-2">Preço do Pastel</p>
-                <p className="text-3xl font-bold text-green-600">
-                  {formatCurrency(settings.pastel_price_cents)}
-                </p>
-              </div>
-            </Card>
-          </div>
-        )}
-
         {/* Flavors Selection */}
         <div className="mb-6">
           <Card title="Selecione os Sabores">
@@ -338,7 +326,7 @@ export default function SalesPage() {
               <div className="space-y-4">
                 {flavors.map((flavor) => {
                   const quantity = cart[flavor.id] || 0
-                  const lineTotal = quantity * (settings?.pastel_price_cents || 0)
+                  const lineTotal = quantity * (flavor.price_cents || 0)
                   
                   return (
                     <div
@@ -347,6 +335,9 @@ export default function SalesPage() {
                     >
                       <div className="flex-1">
                         <h3 className="font-medium text-gray-900">{flavor.name}</h3>
+                        <p className="text-sm text-green-600 font-medium">
+                          {formatCurrency(flavor.price_cents)}
+                        </p>
                         {quantity > 0 && (
                           <p className="text-sm text-gray-600 mt-1">
                             Subtotal: {formatCurrency(lineTotal)}

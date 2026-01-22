@@ -255,8 +255,8 @@ export default function SettingsPage() {
 
             <div className="bg-blue-50 p-4 rounded-md">
               <p className="text-sm text-blue-800">
-                <strong>Nota:</strong> O novo preço será aplicado apenas para vendas futuras. 
-                Vendas já realizadas manterão o preço original.
+                <strong>Nota:</strong> Este preço é usado como padrão ao criar novos sabores. 
+                Cada sabor pode ter seu próprio preço individual configurado na página de Sabores.
               </p>
             </div>
           </div>

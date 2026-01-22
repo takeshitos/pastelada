@@ -15,7 +15,9 @@ export default function FlavorsManagementPage() {
   const [modalOpen, setModalOpen] = useState(false)
   const [editingFlavor, setEditingFlavor] = useState<Flavor | null>(null)
   const [flavorName, setFlavorName] = useState('')
+  const [flavorPrice, setFlavorPrice] = useState('5.00')
   const [nameError, setNameError] = useState('')
+  const [priceError, setPriceError] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info'; show: boolean }>({
     message: '',
@@ -62,11 +64,14 @@ export default function FlavorsManagementPage() {
     if (flavor) {
       setEditingFlavor(flavor)
       setFlavorName(flavor.name)
+      setFlavorPrice((flavor.price_cents / 100).toFixed(2))
     } else {
       setEditingFlavor(null)
       setFlavorName('')
+      setFlavorPrice('5.00')
     }
     setNameError('')
+    setPriceError('')
     setModalOpen(true)
   }
 
@@ -75,7 +80,9 @@ export default function FlavorsManagementPage() {
       setModalOpen(false)
       setEditingFlavor(null)
       setFlavorName('')
+      setFlavorPrice('5.00')
       setNameError('')
+      setPriceError('')
     }
   }
 
@@ -92,16 +99,32 @@ export default function FlavorsManagementPage() {
     return true
   }
 
+  const validatePrice = (): boolean => {
+    const price = parseFloat(flavorPrice)
+    if (isNaN(price) || price < 0) {
+      setPriceError('Preço deve ser um número válido')
+      return false
+    }
+    if (price > 1000) {
+      setPriceError('Preço muito alto')
+      return false
+    }
+    setPriceError('')
+    return true
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!validateName()) {
+    if (!validateName() || !validatePrice()) {
       return
     }
 
     setSubmitting(true)
 
     try {
+      const priceCents = Math.round(parseFloat(flavorPrice) * 100)
+
       if (editingFlavor) {
         // Update existing flavor
         const response = await fetch('/api/flavors', {
@@ -109,7 +132,8 @@ export default function FlavorsManagementPage() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             id: editingFlavor.id,
-            name: flavorName.trim()
+            name: flavorName.trim(),
+            price_cents: priceCents
           })
         })
 
@@ -126,7 +150,10 @@ export default function FlavorsManagementPage() {
         const response = await fetch('/api/flavors', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name: flavorName.trim() })
+          body: JSON.stringify({ 
+            name: flavorName.trim(),
+            price_cents: priceCents
+          })
         })
 
         const data = await response.json()
@@ -270,6 +297,9 @@ export default function FlavorsManagementPage() {
                     Nome
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Preço
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Status
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -286,6 +316,11 @@ export default function FlavorsManagementPage() {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-gray-900">
                         {flavor.name}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-medium text-green-600">
+                        R$ {(flavor.price_cents / 100).toFixed(2)}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -367,6 +402,40 @@ export default function FlavorsManagementPage() {
             {nameError && (
               <p className="mt-1 text-sm text-red-600">{nameError}</p>
             )}
+          </div>
+
+          <div>
+            <label htmlFor="flavor-price" className="block text-sm font-medium text-gray-700 mb-1">
+              Preço (R$) *
+            </label>
+            <input
+              id="flavor-price"
+              type="number"
+              step="0.01"
+              min="0"
+              max="1000"
+              value={flavorPrice}
+              onChange={(e) => {
+                setFlavorPrice(e.target.value)
+                if (priceError) setPriceError('')
+              }}
+              disabled={submitting}
+              className={`
+                w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500
+                ${priceError 
+                  ? 'border-red-300 focus:border-red-500 focus:ring-red-500' 
+                  : 'border-gray-300 focus:border-blue-500'
+                }
+                ${submitting ? 'bg-gray-50 cursor-not-allowed' : 'bg-white'}
+              `}
+              placeholder="5.00"
+            />
+            {priceError && (
+              <p className="mt-1 text-sm text-red-600">{priceError}</p>
+            )}
+            <p className="mt-1 text-xs text-gray-500">
+              Preço individual deste sabor
+            </p>
           </div>
 
           <div className="flex justify-end space-x-3 pt-4">

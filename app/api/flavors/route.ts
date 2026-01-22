@@ -55,13 +55,22 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { name } = body
+    const { name, price_cents } = body
 
     // Validate required fields
     if (!name || typeof name !== 'string' || name.trim().length === 0) {
       return NextResponse.json<ErrorResponse>({
         error: true,
         message: 'Name is required',
+        code: 'VALIDATION_ERROR'
+      }, { status: 400 })
+    }
+
+    // Validate price if provided
+    if (price_cents !== undefined && (typeof price_cents !== 'number' || price_cents < 0)) {
+      return NextResponse.json<ErrorResponse>({
+        error: true,
+        message: 'Price must be a non-negative number',
         code: 'VALIDATION_ERROR'
       }, { status: 400 })
     }
@@ -90,11 +99,24 @@ export async function POST(request: NextRequest) {
       }, { status: 400 })
     }
 
+    // Get default price from settings if not provided
+    let finalPrice = price_cents
+    if (finalPrice === undefined) {
+      const { data: settings } = await (supabaseAdmin as any)
+        .from('app_settings')
+        .select('pastel_price_cents')
+        .eq('id', 1)
+        .single()
+      
+      finalPrice = settings?.pastel_price_cents || 500
+    }
+
     // Create new flavor
     const { data: newFlavor, error: insertError } = await (supabaseAdmin as any)
       .from('flavors')
       .insert({
         name: name.trim(),
+        price_cents: finalPrice,
         active: true
       })
       .select()
@@ -124,7 +146,7 @@ export async function POST(request: NextRequest) {
 export async function PATCH(request: NextRequest) {
   try {
     const body = await request.json()
-    const { id, name, active } = body
+    const { id, name, price_cents, active } = body
 
     // Validate required fields
     if (!id) {
@@ -172,6 +194,17 @@ export async function PATCH(request: NextRequest) {
       }
 
       updates.name = name.trim()
+    }
+
+    if (price_cents !== undefined) {
+      if (typeof price_cents !== 'number' || price_cents < 0) {
+        return NextResponse.json<ErrorResponse>({
+          error: true,
+          message: 'Price must be a non-negative number',
+          code: 'VALIDATION_ERROR'
+        }, { status: 400 })
+      }
+      updates.price_cents = price_cents
     }
 
     if (active !== undefined) {

@@ -39,11 +39,11 @@ export async function POST(request: NextRequest) {
       }, { status: 400 })
     }
 
-    // Validate items and get current price
+    // Validate items and get current prices from flavors
     const flavorIds = body.items.map(item => item.flavor_id)
     const { data: flavors, error: flavorsError } = await supabaseAdmin
       .from('flavors')
-      .select('id, name, active')
+      .select('id, name, price_cents, active')
       .in('id', flavorIds)
       .eq('active', true)
 
@@ -54,6 +54,12 @@ export async function POST(request: NextRequest) {
         code: 'INVALID_FLAVORS'
       }, { status: 400 })
     }
+
+    // Create a map of flavor prices
+    const flavorPrices = new Map<string, number>()
+    flavors.forEach((flavor: any) => {
+      flavorPrices.set(flavor.id, flavor.price_cents)
+    })
 
     // Validate quantities
     for (const item of body.items) {
@@ -68,23 +74,6 @@ export async function POST(request: NextRequest) {
         }, { status: 400 })
       }
     }
-
-    // Get current pastel price
-    const { data: settings, error: settingsError } = await supabaseAdmin
-      .from('app_settings')
-      .select('pastel_price_cents')
-      .eq('id', 1)
-      .single()
-
-    if (settingsError || !settings) {
-      return NextResponse.json<ErrorResponse>({
-        error: true,
-        message: 'Unable to get current price',
-        code: 'SETTINGS_ERROR'
-      }, { status: 500 })
-    }
-
-    const currentPriceCents = (settings as any).pastel_price_cents
 
     // Create or find customer
     let customerId: string | null = null
@@ -149,12 +138,12 @@ export async function POST(request: NextRequest) {
       }, { status: 500 })
     }
 
-    // Create order items
+    // Create order items with individual prices
     const orderItems = body.items.map(item => ({
       order_id: (order as any).id,
       flavor_id: item.flavor_id,
       quantity: item.quantity,
-      unit_price_cents: currentPriceCents,
+      unit_price_cents: flavorPrices.get(item.flavor_id) || 500,
       line_total_cents: 0 // Will be calculated by triggers
     }))
 

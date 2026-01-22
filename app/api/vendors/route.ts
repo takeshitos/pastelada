@@ -3,6 +3,9 @@ import { supabaseAdmin } from '@/lib/supabase'
 import { validateName, validatePhone } from '@/lib/utils'
 import { ErrorResponse } from '@/types/api'
 
+// Force dynamic rendering for this route
+export const dynamic = 'force-dynamic'
+
 // GET /api/vendors - Get all vendors (or only active ones)
 export async function GET(request: NextRequest) {
   try {

@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
 import { ErrorResponse } from '@/types/api'
 
+// Force dynamic rendering for this route
+export const dynamic = 'force-dynamic'
+
 interface UpdateStatusRequest {
   status: 'created' | 'paid' | 'completed' | 'cancelled'
 }

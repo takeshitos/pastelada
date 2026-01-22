@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
 import { ErrorResponse } from '@/types/api'
 
+// Force dynamic rendering for this route
+export const dynamic = 'force-dynamic'
+
 export interface AdminReportsResponse {
   sales: Array<{
     id: string

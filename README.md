@@ -2,7 +2,22 @@
 
 Sistema de vendas para pastelaria construído com Next.js 14, TypeScript, Tailwind CSS e Supabase.
 
-## 🚀 Começar Agora
+## 🚨 ATENÇÃO: Sistema Deployado mas Não Funciona?
+
+### 👉 [**LEIA-ME-PRIMEIRO.md**](LEIA-ME-PRIMEIRO.md) 👈
+
+**Se você já fez deploy no Vercel mas os dados não atualizam, comece por aqui!**
+
+**Tempo:** 10 minutos | **Dificuldade:** Fácil
+
+**Guias disponíveis:**
+- 📋 [CHECKLIST-VERCEL.md](CHECKLIST-VERCEL.md) - Passo a passo com checklist
+- ⚡ [GUIA-RAPIDO-VERCEL.md](GUIA-RAPIDO-VERCEL.md) - Versão rápida (5 min)
+- 📖 [CONFIGURACAO-VERCEL.md](CONFIGURACAO-VERCEL.md) - Guia detalhado
+
+---
+
+## 🚀 Começar do Zero
 
 **Novo no projeto?** Siga este guia passo a passo:
 
@@ -143,11 +158,6 @@ Para instruções de deploy em produção (Vercel), consulte o **[Guia de Deploy
 Se após o deploy os dados não estiverem atualizando, você precisa configurar as variáveis de ambiente do Supabase no Vercel.
 
 **📋 Siga este guia passo a passo:** [**CHECKLIST-VERCEL.md**](CHECKLIST-VERCEL.md)
-
-**Outros recursos úteis:**
-- 📖 [CONFIGURACAO-VERCEL.md](CONFIGURACAO-VERCEL.md) - Guia detalhado
-- 🎯 [PROXIMOS-PASSOS.md](PROXIMOS-PASSOS.md) - Status e próximos passos
-- 📊 [RESUMO-SITUACAO-ATUAL.md](RESUMO-SITUACAO-ATUAL.md) - Visão geral completa
 
 **Verificar configuração local:**
 ```bash

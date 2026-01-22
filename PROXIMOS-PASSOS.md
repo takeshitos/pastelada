@@ -106,11 +106,11 @@ Faça novo deploy sem cache:
 
 ## 📚 Documentação Disponível
 
+- **CHECKLIST-VERCEL.md** - Checklist passo a passo
 - **CONFIGURACAO-VERCEL.md** - Guia completo de configuração
 - **README.md** - Documentação geral do projeto
 - **docs/SETUP.md** - Setup inicial do projeto
 - **docs/DEPLOYMENT.md** - Guia de deploy
-- **docs/PRODUCTION-CHECKLIST.md** - Checklist de produção
 
 ## 🎯 Resumo
 

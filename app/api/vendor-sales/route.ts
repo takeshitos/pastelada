@@ -46,7 +46,8 @@ export async function GET(request: NextRequest) {
         payment_method,
         status,
         customers (
-          name
+          name,
+          phone
         ),
         order_items (
           quantity,
@@ -103,6 +104,7 @@ export async function GET(request: NextRequest) {
       payment_method: order.payment_method,
       status: order.status,
       customer_name: order.customers?.name || 'Unknown',
+      customer_phone: order.customers?.phone || null,
       items: order.order_items.map((item: any) => ({
         flavor_name: item.flavors?.name || 'Unknown',
         quantity: item.quantity,

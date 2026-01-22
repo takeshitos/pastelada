@@ -98,6 +98,7 @@ npm run lint
 ### 🔧 Documentação Técnica
 - **[🗄️ Configuração do Banco de Dados](docs/database-setup.md)** - Detalhes sobre migrations e estrutura
 - **[🔐 Configuração Admin](docs/admin-setup.md)** - Criação de usuário administrador
+- **[💳 Configuração PIX](docs/CONFIGURACAO-PIX.md)** - Upload de QR Code e configuração de chave PIX
 - **[📋 Especificações do Sistema](.kiro/specs/pastelada-sales-system/)** - Requisitos, design e tarefas
 
 ## 🏗️ Arquitetura

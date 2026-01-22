@@ -86,10 +86,10 @@ export default function VendorSelector() {
   if (vendorsError) {
     return (
       <div className="text-center py-8">
-        <p className="text-red-600 mb-4">Erro ao carregar vendedores: {vendorsError}</p>
+        <p className="text-error-600 dark:text-error-400 mb-4">Erro ao carregar vendedores: {vendorsError}</p>
         <button
           onClick={() => refetch()}
-          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+          className="px-4 py-2 bg-primary-600 dark:bg-primary-500 text-white rounded-md hover:bg-primary-700 dark:hover:bg-primary-600 transition-colors"
         >
           Tentar Novamente
         </button>
@@ -109,10 +109,10 @@ export default function VendorSelector() {
             />
             
             {vendors.length > 0 && (
-              <div className="mt-4 pt-4 border-t border-gray-200">
+              <div className="mt-4 pt-4 border-t border-neutral-200 dark:border-neutral-700">
                 <button
                   onClick={() => setShowForm(false)}
-                  className="text-sm text-blue-600 hover:text-blue-700"
+                  className="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors"
                 >
                   ← Voltar para lista de vendedores
                 </button>
@@ -136,8 +136,8 @@ export default function VendorSelector() {
                 <button
                   onClick={handleGoToSales}
                   className="
-                    flex-1 bg-green-600 text-white py-3 px-6 rounded-md font-medium
-                    hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2
+                    flex-1 bg-success-600 dark:bg-success-500 text-white py-3 px-6 rounded-md font-medium
+                    hover:bg-success-700 dark:hover:bg-success-600 focus:outline-none focus:ring-2 focus:ring-success-500 focus:ring-offset-2
                     transition-colors duration-200
                   "
                 >
@@ -148,8 +148,8 @@ export default function VendorSelector() {
               <button
                 onClick={() => setShowForm(true)}
                 className="
-                  bg-gray-600 text-white py-3 px-6 rounded-md font-medium
-                  hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2
+                  bg-neutral-600 dark:bg-neutral-700 text-white py-3 px-6 rounded-md font-medium
+                  hover:bg-neutral-700 dark:hover:bg-neutral-600 focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-offset-2
                   transition-colors duration-200
                 "
               >

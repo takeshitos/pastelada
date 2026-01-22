@@ -4,9 +4,84 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Container from '@/components/layouts/Container'
 import Card from '@/components/layouts/Card'
+import LoadingSpinner from '@/components/ui/LoadingSpinner'
+import { formatCurrency } from '@/lib/utils'
+
+interface DashboardStats {
+  totalSales: number
+  salesToday: number
+  totalOrders: number
+  activeVendors: number
+  activeFlavors: number
+}
 
 export default function AdminDashboardPage() {
   const router = useRouter()
+  const [stats, setStats] = useState<DashboardStats>({
+    totalSales: 0,
+    salesToday: 0,
+    totalOrders: 0,
+    activeVendors: 0,
+    activeFlavors: 0
+  })
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchDashboardStats()
+  }, [])
+
+  const fetchDashboardStats = async () => {
+    try {
+      setLoading(true)
+      
+      // Fetch all sales
+      const salesResponse = await fetch('/api/admin-reports?limit=1000')
+      const salesData = await salesResponse.json()
+      
+      // Fetch vendors
+      const vendorsResponse = await fetch('/api/vendors')
+      const vendorsData = await vendorsResponse.json()
+      
+      // Fetch flavors
+      const flavorsResponse = await fetch('/api/flavors')
+      const flavorsData = await flavorsResponse.json()
+      
+      // Filter out cancelled orders
+      const validSales = salesData.sales?.filter((sale: any) => sale.status !== 'cancelled') || []
+      
+      // Calculate total sales (excluding cancelled)
+      const totalSales = validSales.reduce((sum: number, sale: any) => sum + sale.total_cents, 0)
+      
+      // Calculate sales today (excluding cancelled)
+      const today = new Date()
+      today.setHours(0, 0, 0, 0)
+      const salesToday = validSales.filter((sale: any) => {
+        const saleDate = new Date(sale.created_at)
+        return saleDate >= today
+      }).reduce((sum: number, sale: any) => sum + sale.total_cents, 0)
+      
+      // Count total orders (excluding cancelled)
+      const totalOrders = validSales.length
+      
+      // Count active vendors
+      const activeVendors = vendorsData.vendors?.filter((v: any) => v.active).length || 0
+      
+      // Count active flavors
+      const activeFlavors = flavorsData.flavors?.filter((f: any) => f.active).length || 0
+      
+      setStats({
+        totalSales,
+        salesToday,
+        totalOrders,
+        activeVendors,
+        activeFlavors
+      })
+    } catch (error) {
+      console.error('Error fetching dashboard stats:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <Container size="xl">
@@ -19,33 +94,80 @@ export default function AdminDashboardPage() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 md:gap-6 mb-6 md:mb-8">
         {/* Quick Stats Cards */}
         <Card>
           <div className="text-center py-4">
-            <div className="text-3xl font-bold text-blue-600 mb-2">-</div>
-            <div className="text-sm text-gray-600">Total de Vendas</div>
+            {loading ? (
+              <LoadingSpinner size="sm" />
+            ) : (
+              <>
+                <div className="text-3xl font-bold text-blue-600 mb-2">
+                  {formatCurrency(stats.totalSales)}
+                </div>
+                <div className="text-sm text-gray-600">Total de Vendas</div>
+              </>
+            )}
           </div>
         </Card>
 
         <Card>
           <div className="text-center py-4">
-            <div className="text-3xl font-bold text-green-600 mb-2">-</div>
-            <div className="text-sm text-gray-600">Vendas Hoje</div>
+            {loading ? (
+              <LoadingSpinner size="sm" />
+            ) : (
+              <>
+                <div className="text-3xl font-bold text-green-600 mb-2">
+                  {formatCurrency(stats.salesToday)}
+                </div>
+                <div className="text-sm text-gray-600">Vendas Hoje</div>
+              </>
+            )}
           </div>
         </Card>
 
         <Card>
           <div className="text-center py-4">
-            <div className="text-3xl font-bold text-purple-600 mb-2">-</div>
-            <div className="text-sm text-gray-600">Vendedores Ativos</div>
+            {loading ? (
+              <LoadingSpinner size="sm" />
+            ) : (
+              <>
+                <div className="text-3xl font-bold text-indigo-600 mb-2">
+                  {stats.totalOrders}
+                </div>
+                <div className="text-sm text-gray-600">Total de Pedidos</div>
+              </>
+            )}
           </div>
         </Card>
 
         <Card>
           <div className="text-center py-4">
-            <div className="text-3xl font-bold text-orange-600 mb-2">-</div>
-            <div className="text-sm text-gray-600">Sabores Ativos</div>
+            {loading ? (
+              <LoadingSpinner size="sm" />
+            ) : (
+              <>
+                <div className="text-3xl font-bold text-purple-600 mb-2">
+                  {stats.activeVendors}
+                </div>
+                <div className="text-sm text-gray-600">Vendedores Ativos</div>
+              </>
+            )}
+          </div>
+        </Card>
+
+        <Card>
+          <div className="text-center py-4">
+            {loading ? (
+              <LoadingSpinner size="sm" />
+            ) : (
+              <>
+                <div className="text-3xl font-bold text-orange-600 mb-2">
+                  {stats.activeFlavors}
+                </div>
+                <div className="text-sm text-gray-600">Sabores Ativos</div>
+              </>
+            )}
           </div>
         </Card>
       </div>

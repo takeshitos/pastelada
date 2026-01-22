@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { authHelpers } from '@/lib/supabase'
 import Container from '@/components/layouts/Container'
 import Card from '@/components/layouts/Card'
+import Logo from '@/components/ui/Logo'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
 import Toast from '@/components/ui/Toast'
 
@@ -143,7 +144,10 @@ export default function AdminLoginPage() {
     <main className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <Container size="sm">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <div className="flex justify-center mb-6">
+            <Logo size="lg" />
+          </div>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
             Painel Administrativo
           </h1>
           <p className="text-gray-600">

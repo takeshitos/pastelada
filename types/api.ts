@@ -41,6 +41,7 @@ export interface VendorSalesResponse {
     payment_method: string
     status: string
     customer_name?: string
+    customer_phone?: string | null
     items: Array<{
       flavor_name: string
       quantity: number

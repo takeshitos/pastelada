@@ -81,7 +81,7 @@ export default function Table<T extends Record<string, any>>({
 
   if (data.length === 0) {
     return (
-      <div className="text-center py-8 text-gray-500">
+      <div className="text-center py-8 text-gray-500 dark:text-gray-400">
         <p>{emptyMessage}</p>
       </div>
     );
@@ -91,15 +91,15 @@ export default function Table<T extends Record<string, any>>({
     <div className={`w-full ${className}`}>
       {/* Desktop Table */}
       <div className={`${responsive ? 'hidden md:block' : ''} overflow-x-auto`}>
-        <table className="min-w-full bg-white border border-gray-200 rounded-lg">
-          <thead className="bg-gray-50">
+        <table className="min-w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+          <thead className="bg-gray-50 dark:bg-gray-900">
             <tr>
               {columns.map((column) => (
                 <th
                   key={column.key}
                   className={`
-                    px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider
-                    ${column.sortable ? 'cursor-pointer hover:bg-gray-100' : ''}
+                    px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider
+                    ${column.sortable ? 'cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800' : ''}
                     ${column.className || ''}
                   `}
                   onClick={() => handleSort(column.key)}
@@ -111,8 +111,8 @@ export default function Table<T extends Record<string, any>>({
                         <svg
                           className={`w-3 h-3 ${
                             sortConfig?.key === column.key && sortConfig.direction === 'asc'
-                              ? 'text-blue-600'
-                              : 'text-gray-400'
+                              ? 'text-blue-600 dark:text-blue-400'
+                              : 'text-gray-400 dark:text-gray-500'
                           }`}
                           fill="currentColor"
                           viewBox="0 0 20 20"
@@ -126,13 +126,13 @@ export default function Table<T extends Record<string, any>>({
               ))}
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
             {sortedData.map((row, index) => (
-              <tr key={index} className="hover:bg-gray-50">
+              <tr key={index} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                 {columns.map((column) => (
                   <td
                     key={column.key}
-                    className={`px-4 py-3 whitespace-nowrap text-sm text-gray-900 ${
+                    className={`px-4 py-3 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100 ${
                       column.className || ''
                     }`}
                   >
@@ -149,13 +149,13 @@ export default function Table<T extends Record<string, any>>({
       {responsive && (
         <div className="md:hidden space-y-4">
           {sortedData.map((row, index) => (
-            <div key={index} className="bg-white border border-gray-200 rounded-lg p-4">
+            <div key={index} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
               {columns.map((column) => (
-                <div key={column.key} className="flex justify-between py-2 border-b border-gray-100 last:border-b-0">
-                  <span className="font-medium text-gray-600">
+                <div key={column.key} className="flex justify-between py-2 border-b border-gray-100 dark:border-gray-700 last:border-b-0">
+                  <span className="font-medium text-gray-600 dark:text-gray-400">
                     {column.mobileLabel || column.label}:
                   </span>
-                  <span className="text-gray-900 text-right">
+                  <span className="text-gray-900 dark:text-gray-100 text-right">
                     {renderCell(column, row)}
                   </span>
                 </div>
@@ -167,9 +167,9 @@ export default function Table<T extends Record<string, any>>({
 
       {/* Pagination */}
       {pagination && (
-        <div className="flex items-center justify-between mt-4 px-4 py-3 bg-white border border-gray-200 rounded-lg">
+        <div className="flex items-center justify-between mt-4 px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
           <div className="flex items-center space-x-2">
-            <span className="text-sm text-gray-700">
+            <span className="text-sm text-gray-700 dark:text-gray-300">
               Página {pagination.currentPage} de {pagination.totalPages}
             </span>
           </div>
@@ -177,14 +177,14 @@ export default function Table<T extends Record<string, any>>({
             <button
               onClick={() => pagination.onPageChange(pagination.currentPage - 1)}
               disabled={pagination.currentPage <= 1}
-              className="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Anterior
             </button>
             <button
               onClick={() => pagination.onPageChange(pagination.currentPage + 1)}
               disabled={pagination.currentPage >= pagination.totalPages}
-              className="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Próxima
             </button>

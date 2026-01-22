@@ -11,6 +11,7 @@ export interface AdminReportsResponse {
     status: string
     vendor_name: string
     customer_name: string
+    customer_phone: string | null
     items: Array<{
       flavor_name: string
       quantity: number
@@ -45,7 +46,8 @@ export async function GET(request: NextRequest) {
           name
         ),
         customers (
-          name
+          name,
+          phone
         ),
         order_items (
           quantity,
@@ -141,6 +143,7 @@ export async function GET(request: NextRequest) {
       status: order.status,
       vendor_name: order.vendors?.name || 'Unknown',
       customer_name: order.customers?.name || 'Unknown',
+      customer_phone: order.customers?.phone || null,
       items: order.order_items.map((item: any) => ({
         flavor_name: item.flavors?.name || 'Unknown',
         quantity: item.quantity,

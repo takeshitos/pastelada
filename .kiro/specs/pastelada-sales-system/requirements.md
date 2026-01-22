@@ -51,7 +51,7 @@ O Sistema Pastelada é uma aplicação web completa para gerenciamento de vendas
 
 1. WHEN um vendedor escolhe pagamento PIX, THE Sistema_Pastelada SHALL exibir QR code, valor total e lista de itens
 2. WHEN um vendedor confirma pagamento PIX, THE Sistema_Pastelada SHALL registrar a venda com status "paid" e método "PIX"
-3. WHEN um vendedor escolhe pagamento local, THE Sistema_Pastelada SHALL registrar a venda com status "paid" e método "LOCAL"
+3. WHEN um vendedor escolhe pagamento local, THE Sistema_Pastelada SHALL registrar a venda com status "pending" e método "LOCAL"
 4. WHEN uma venda é finalizada, THE Sistema_Pastelada SHALL exibir confirmação de sucesso e opções para nova venda ou sair
 5. THE Sistema_Pastelada SHALL persistir todas as vendas no banco de dados via API server-side
 

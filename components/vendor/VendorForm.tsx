@@ -78,8 +78,9 @@ export default function VendorForm({ onSubmit, loading = false, className = '' }
           value={formData.name}
           onChange={(e) => handleInputChange('name', e.target.value)}
           className={`
-            w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500
-            ${errors.name ? 'border-red-500' : 'border-gray-300'}
+            w-full px-4 py-2 border rounded-md shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+            ${errors.name ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : 'border-gray-300'}
+            ${loading ? 'bg-gray-50 cursor-not-allowed' : ''}
           `}
           placeholder="Digite o nome do vendedor"
           disabled={loading}
@@ -100,8 +101,9 @@ export default function VendorForm({ onSubmit, loading = false, className = '' }
           value={formData.phone}
           onChange={(e) => handleInputChange('phone', e.target.value)}
           className={`
-            w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500
-            ${errors.phone ? 'border-red-500' : 'border-gray-300'}
+            w-full px-4 py-2 border rounded-md shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+            ${errors.phone ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : 'border-gray-300'}
+            ${loading ? 'bg-gray-50 cursor-not-allowed' : ''}
           `}
           placeholder="Digite apenas números"
           disabled={loading}

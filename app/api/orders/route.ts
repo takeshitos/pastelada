@@ -122,12 +122,16 @@ export async function POST(request: NextRequest) {
     }
 
     // Create order
+    // PIX: marked as 'paid' immediately when mark_as_paid is true
+    // LOCAL: always starts as 'created' (pending payment confirmation)
+    const orderStatus = body.payment_method === 'PIX' && body.mark_as_paid ? 'paid' : 'created'
+    
     const { data: order, error: orderError } = await supabaseAdmin
       .from('orders')
       .insert({
         vendor_id: body.vendor_id,
         customer_id: customerId,
-        status: body.mark_as_paid ? 'paid' : 'created',
+        status: orderStatus,
         payment_method: body.payment_method,
         total_cents: 0 // Will be calculated by triggers
       } as any)

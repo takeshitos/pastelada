@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { formatCurrency } from '@/lib/utils'
+import { supabase } from '@/lib/supabase'
 import Modal from '@/components/ui/Modal'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
 import type { Flavor } from '@/types/database'
@@ -12,7 +13,8 @@ interface PIXModalProps {
   onClose: () => void
   total: number
   items: Array<{ flavor: Flavor; quantity: number; lineTotal: number }>
-  qrCodeUrl?: string
+  qrCodePath?: string
+  pixKey?: string
   onConfirmPayment: () => void
   isLoading?: boolean
 }
@@ -22,11 +24,26 @@ export default function PIXModal({
   onClose, 
   total, 
   items, 
-  qrCodeUrl, 
+  qrCodePath,
+  pixKey,
   onConfirmPayment, 
   isLoading = false 
 }: PIXModalProps) {
   const [paymentConfirmed, setPaymentConfirmed] = useState(false)
+  const [qrCodeUrl, setQrCodeUrl] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (qrCodePath) {
+      // Get public URL from Supabase Storage
+      const { data } = supabase.storage
+        .from('public-assets')
+        .getPublicUrl(qrCodePath)
+      
+      if (data?.publicUrl) {
+        setQrCodeUrl(data.publicUrl)
+      }
+    }
+  }, [qrCodePath])
 
   const handleConfirmPayment = () => {
     setPaymentConfirmed(true)
@@ -74,6 +91,24 @@ export default function PIXModal({
             Escaneie o QR Code com seu app de pagamento
           </p>
         </div>
+
+        {/* PIX Key */}
+        {pixKey && (
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <h3 className="font-medium text-gray-900 mb-2">Chave PIX</h3>
+            <div className="flex items-center justify-between bg-white p-3 rounded border border-gray-200">
+              <code className="text-sm text-gray-700 break-all">{pixKey}</code>
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(pixKey)
+                }}
+                className="ml-2 px-3 py-1 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors flex-shrink-0"
+              >
+                Copiar
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Payment Details */}
         <div className="bg-blue-50 p-4 rounded-lg">

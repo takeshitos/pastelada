@@ -36,7 +36,7 @@ export default function RootLayout({
     <html lang="pt-BR">
       <body className={`${inter.className} antialiased`}>
         <NetworkStatus />
-        <div id="root" className="min-h-screen bg-gray-50">
+        <div id="root" className="min-h-screen bg-neutral-50 text-neutral-900">
           {children}
         </div>
         <div id="modal-root" />

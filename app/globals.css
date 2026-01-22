@@ -2,32 +2,365 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================
+   PALETA DE CORES - SISTEMA PASTELADA
+   Design Moderno e Profissional
+   ============================================ */
+
+/* Tema Claro (Padrão) */
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  /* Cores de fundo */
+  --bg-primary: 248, 250, 252;        /* Slate 50 */
+  --bg-secondary: 255, 255, 255;      /* Branco puro */
+  --bg-tertiary: 241, 245, 249;       /* Slate 100 */
+  
+  /* Cores de texto */
+  --text-primary: 15, 23, 42;         /* Slate 900 */
+  --text-secondary: 51, 65, 85;       /* Slate 700 */
+  --text-tertiary: 100, 116, 139;     /* Slate 500 */
+  --text-muted: 148, 163, 184;        /* Slate 400 */
+  
+  /* Cores de borda */
+  --border-primary: 226, 232, 240;    /* Slate 200 */
+  --border-secondary: 203, 213, 225;  /* Slate 300 */
+  
+  /* Cor primária (azul moderno) */
+  --primary: 59, 130, 246;            /* Blue 500 */
+  --primary-hover: 37, 99, 235;       /* Blue 600 */
+  --primary-light: 219, 234, 254;     /* Blue 100 */
+  
+  /* Cores de status */
+  --success: 34, 197, 94;             /* Green 500 */
+  --success-light: 220, 252, 231;     /* Green 100 */
+  --error: 239, 68, 68;               /* Red 500 */
+  --error-light: 254, 226, 226;       /* Red 100 */
+  --warning: 245, 158, 11;            /* Amber 500 */
+  --warning-light: 254, 243, 199;     /* Amber 100 */
+  --info: 6, 182, 212;                /* Cyan 500 */
+  --info-light: 207, 250, 254;        /* Cyan 100 */
 }
 
+/* Tema Escuro */
 @media (prefers-color-scheme: dark) {
   :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+    /* Cores de fundo */
+    --bg-primary: 2, 6, 23;            /* Slate 950 */
+    --bg-secondary: 15, 23, 42;        /* Slate 900 */
+    --bg-tertiary: 30, 41, 59;         /* Slate 800 */
+    
+    /* Cores de texto */
+    --text-primary: 248, 250, 252;     /* Slate 50 */
+    --text-secondary: 226, 232, 240;   /* Slate 200 */
+    --text-tertiary: 148, 163, 184;    /* Slate 400 */
+    --text-muted: 100, 116, 139;       /* Slate 500 */
+    
+    /* Cores de borda */
+    --border-primary: 51, 65, 85;      /* Slate 700 */
+    --border-secondary: 71, 85, 105;   /* Slate 600 */
+    
+    /* Cor primária (azul mais claro para dark mode) */
+    --primary: 96, 165, 250;           /* Blue 400 */
+    --primary-hover: 147, 197, 253;    /* Blue 300 */
+    --primary-light: 30, 58, 138;      /* Blue 900 */
+    
+    /* Cores de status (mais vibrantes no escuro) */
+    --success: 74, 222, 128;           /* Green 400 */
+    --success-light: 20, 83, 45;       /* Green 900 */
+    --error: 248, 113, 113;            /* Red 400 */
+    --error-light: 127, 29, 29;        /* Red 900 */
+    --warning: 251, 191, 36;           /* Amber 400 */
+    --warning-light: 120, 53, 15;      /* Amber 900 */
+    --info: 34, 211, 238;              /* Cyan 400 */
+    --info-light: 22, 78, 99;          /* Cyan 900 */
   }
 }
 
+/* ============================================
+   ESTILOS BASE
+   ============================================ */
+
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  color: rgb(var(--text-primary));
+  background-color: rgb(var(--bg-primary));
+  min-height: 100vh;
+  font-feature-settings: 'rlig' 1, 'calt' 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
+
+/* ============================================
+   INPUTS E FORMULÁRIOS
+   ============================================ */
+
+input,
+select,
+textarea {
+  color: #0f172a !important; /* Slate 900 - Texto escuro e legível */
+  background-color: rgb(var(--bg-secondary));
+  border-color: rgb(var(--border-primary));
+}
+
+/* Estilo específico para selects */
+select {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.5rem center;
+  background-repeat: no-repeat;
+  background-size: 1.5em 1.5em;
+  padding-right: 2.5rem;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+/* Cor das opções do select */
+select option {
+  color: #0f172a;
+  background-color: white;
+  padding: 0.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  input,
+  select,
+  textarea {
+    color: rgb(248, 250, 252) !important; /* Slate 50 - Branco no dark mode */
+  }
+  
+  select {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  }
+  
+  select option {
+    color: #f8fafc;
+    background-color: #1e293b;
+  }
+}
+
+/* Força cor escura nos inputs mesmo com classes do Tailwind */
+.dark input,
+.dark select,
+.dark textarea {
+  color: #f8fafc !important; /* Slate 50 no dark mode */
+}
+
+.dark select {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+}
+
+.dark select option {
+  color: #f8fafc;
+  background-color: #1e293b;
+}
+
+input:not(.dark input),
+select:not(.dark select),
+textarea:not(.dark textarea) {
+  color: #0f172a !important; /* Slate 900 no modo claro */
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: rgb(var(--primary));
+  outline: none;
+  ring: 2px;
+  ring-color: rgba(var(--primary), 0.2);
+}
+
+/* Placeholders com bom contraste */
+input::placeholder,
+textarea::placeholder,
+select::placeholder {
+  color: rgb(var(--text-muted));
+  opacity: 1;
+}
+
+/* ============================================
+   LINKS E BOTÕES
+   ============================================ */
+
+a {
+  color: rgb(var(--primary));
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: rgb(var(--primary-hover));
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ============================================
+   CARDS E CONTAINERS
+   ============================================ */
+
+.card-bg {
+  background-color: rgb(var(--bg-secondary));
+  border-color: rgb(var(--border-primary));
+}
+
+.card-hover:hover {
+  border-color: rgb(var(--border-secondary));
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+@media (prefers-color-scheme: dark) {
+  .card-hover:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  }
+}
+
+/* ============================================
+   MODAIS E OVERLAYS
+   ============================================ */
+
+.modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+}
+
+@media (prefers-color-scheme: dark) {
+  .modal-backdrop {
+    background-color: rgba(0, 0, 0, 0.75);
+  }
+}
+
+/* ============================================
+   TABELAS
+   ============================================ */
+
+table {
+  color: rgb(var(--text-primary));
+}
+
+table thead {
+  background-color: rgb(var(--bg-tertiary));
+  border-bottom: 2px solid rgb(var(--border-secondary));
+}
+
+table tbody tr {
+  border-bottom: 1px solid rgb(var(--border-primary));
+}
+
+table tbody tr:hover {
+  background-color: rgb(var(--bg-tertiary));
+}
+
+/* ============================================
+   SCROLLBAR PERSONALIZADA
+   ============================================ */
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgb(var(--bg-primary));
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(var(--border-secondary));
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(var(--text-muted));
+}
+
+@media (prefers-color-scheme: dark) {
+  ::-webkit-scrollbar-thumb {
+    background: rgb(var(--border-secondary));
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgb(var(--text-tertiary));
+  }
+}
+
+/* ============================================
+   UTILITÁRIOS PERSONALIZADOS
+   ============================================ */
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+  
+  /* Cores de texto */
+  .text-primary {
+    color: rgb(var(--text-primary));
+  }
+  
+  .text-secondary {
+    color: rgb(var(--text-secondary));
+  }
+  
+  .text-tertiary {
+    color: rgb(var(--text-tertiary));
+  }
+  
+  .text-muted {
+    color: rgb(var(--text-muted));
+  }
+  
+  /* Cores de fundo */
+  .bg-primary {
+    background-color: rgb(var(--bg-primary));
+  }
+  
+  .bg-secondary {
+    background-color: rgb(var(--bg-secondary));
+  }
+  
+  .bg-tertiary {
+    background-color: rgb(var(--bg-tertiary));
+  }
+  
+  /* Cores de borda */
+  .border-primary {
+    border-color: rgb(var(--border-primary));
+  }
+  
+  .border-secondary {
+    border-color: rgb(var(--border-secondary));
+  }
+  
+  /* Cor primária */
+  .text-brand {
+    color: rgb(var(--primary));
+  }
+  
+  .bg-brand {
+    background-color: rgb(var(--primary));
+  }
+  
+  .border-brand {
+    border-color: rgb(var(--primary));
+  }
+  
+  /* Efeito de brilho suave */
+  .glow {
+    box-shadow: 0 0 20px rgba(var(--primary), 0.3);
+  }
+  
+  /* Transições suaves */
+  .transition-smooth {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  /* Força cor preta nos inputs */
+  .input-text-black {
+    color: #0f172a !important; /* Slate 900 */
+  }
+  
+  @media (prefers-color-scheme: dark) {
+    .input-text-black {
+      color: #f8fafc !important; /* Slate 50 no dark mode */
+    }
   }
 }

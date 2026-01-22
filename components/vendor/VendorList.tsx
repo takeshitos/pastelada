@@ -29,8 +29,8 @@ export default function VendorList({
   if (vendors.length === 0) {
     return (
       <div className={`text-center py-8 ${className}`}>
-        <p className="text-gray-500">Nenhum vendedor cadastrado ainda.</p>
-        <p className="text-sm text-gray-400 mt-1">
+        <p className="text-neutral-500 dark:text-neutral-400">Nenhum vendedor cadastrado ainda.</p>
+        <p className="text-sm text-neutral-400 dark:text-neutral-500 mt-1">
           Cadastre o primeiro vendedor usando o formulário acima.
         </p>
       </div>
@@ -39,7 +39,7 @@ export default function VendorList({
 
   return (
     <div className={`space-y-2 ${className}`}>
-      <h3 className="text-lg font-medium text-gray-900 mb-4">
+      <h3 className="text-lg font-medium text-neutral-900 dark:text-neutral-50 mb-4">
         Selecione seu nome para continuar:
       </h3>
       
@@ -50,23 +50,23 @@ export default function VendorList({
             onClick={() => onSelectVendor(vendor)}
             className={`
               w-full p-4 text-left border rounded-lg transition-all duration-200
-              hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+              hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
               ${selectedVendorId === vendor.id 
-                ? 'border-blue-500 bg-blue-50 shadow-md' 
-                : 'border-gray-200 bg-white hover:border-gray-300'
+                ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20 shadow-md' 
+                : 'border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-600'
               }
             `}
           >
             <div className="flex items-center justify-between">
               <div>
-                <h4 className="font-medium text-gray-900">{vendor.name}</h4>
+                <h4 className="font-medium text-neutral-900 dark:text-neutral-50">{vendor.name}</h4>
                 {vendor.phone && (
-                  <p className="text-sm text-gray-500 mt-1">{vendor.phone}</p>
+                  <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">{vendor.phone}</p>
                 )}
               </div>
               
               {selectedVendorId === vendor.id && (
-                <div className="flex items-center text-blue-600">
+                <div className="flex items-center text-primary-600 dark:text-primary-400">
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                     <path 
                       fillRule="evenodd" 
@@ -82,8 +82,8 @@ export default function VendorList({
       </div>
       
       {selectedVendorId && (
-        <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
-          <p className="text-sm text-green-800">
+        <div className="mt-6 p-4 bg-success-50 dark:bg-success-900/20 border border-success-200 dark:border-success-800 rounded-lg">
+          <p className="text-sm text-success-800 dark:text-success-200">
             ✓ Vendedor selecionado! Clique em &quot;Ir para Vendas&quot; para continuar.
           </p>
         </div>

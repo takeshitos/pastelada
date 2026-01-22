@@ -58,7 +58,9 @@ export default function SettingsPage() {
       setPixKey(fetchedSettings.pix_key_text || '')
       
       if (fetchedSettings.pix_qr_image_path) {
-        setQrCodePreview(fetchedSettings.pix_qr_image_path)
+        // Get public URL from Supabase
+        const qrUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/public-assets/${fetchedSettings.pix_qr_image_path}`
+        setQrCodePreview(qrUrl)
       }
     } catch (error) {
       console.error('Error fetching settings:', error)
@@ -128,15 +130,41 @@ export default function SettingsPage() {
       // Convert reais to cents
       const priceCents = reaisToCents(parseFloat(priceReais))
 
-      // For now, we'll just update the price and PIX key
-      // File upload would require Supabase Storage integration
+      let qrCodePath: string | null = null
+
+      // Upload QR code if a new file was selected
+      if (qrCodeFile) {
+        const formData = new FormData()
+        formData.append('file', qrCodeFile)
+
+        const uploadResponse = await fetch('/api/settings/upload-qr', {
+          method: 'POST',
+          body: formData
+        })
+
+        const uploadData = await uploadResponse.json()
+
+        if (!uploadResponse.ok) {
+          throw new Error(uploadData.message || 'Erro ao fazer upload do QR Code')
+        }
+
+        qrCodePath = uploadData.path
+      }
+
+      // Update settings
+      const updateBody: any = {
+        pastel_price_cents: priceCents,
+        pix_key_text: pixKey.trim() || null
+      }
+
+      if (qrCodePath) {
+        updateBody.pix_qr_image_path = qrCodePath
+      }
+
       const response = await fetch('/api/settings', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          pastel_price_cents: priceCents,
-          pix_key_text: pixKey.trim() || null
-        })
+        body: JSON.stringify(updateBody)
       })
 
       const data = await response.json()
@@ -147,6 +175,7 @@ export default function SettingsPage() {
       }
 
       showToast('Configurações atualizadas com sucesso!', 'success')
+      setQrCodeFile(null)
       fetchSettings()
     } catch (error) {
       console.error('Error saving settings:', error)
@@ -270,15 +299,18 @@ export default function SettingsPage() {
                 accept="image/*"
                 onChange={handleFileChange}
                 disabled={submitting}
-                className="
-                  block w-full text-sm text-gray-500
+                className={`
+                  block w-full text-sm text-gray-700
+                  border border-gray-300 rounded-md shadow-sm
+                  bg-white
                   file:mr-4 file:py-2 file:px-4
                   file:rounded-md file:border-0
                   file:text-sm file:font-medium
                   file:bg-blue-50 file:text-blue-700
                   hover:file:bg-blue-100
-                  disabled:opacity-50 disabled:cursor-not-allowed
-                "
+                  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                  ${submitting ? 'bg-gray-50 cursor-not-allowed opacity-50' : ''}
+                `}
               />
               <p className="mt-1 text-sm text-gray-500">
                 Imagem do QR Code para pagamento PIX (máximo 2MB)
@@ -292,30 +324,17 @@ export default function SettingsPage() {
                   Preview do QR Code
                 </label>
                 <div className="border-2 border-gray-200 rounded-lg p-4 inline-block">
-                  {qrCodePreview.startsWith('data:') ? (
-                    <img 
-                      src={qrCodePreview} 
-                      alt="QR Code Preview" 
-                      className="w-48 h-48 object-contain"
-                    />
-                  ) : (
-                    <div className="w-48 h-48 bg-gray-100 flex items-center justify-center rounded-lg">
-                      <p className="text-sm text-gray-500 text-center px-4">
-                        QR Code salvo<br/>
-                        (Upload de nova imagem em desenvolvimento)
-                      </p>
-                    </div>
-                  )}
+                  <Image 
+                    src={qrCodePreview} 
+                    alt="QR Code Preview" 
+                    width={192}
+                    height={192}
+                    className="w-48 h-48 object-contain"
+                    unoptimized
+                  />
                 </div>
               </div>
             )}
-
-            <div className="bg-yellow-50 p-4 rounded-md">
-              <p className="text-sm text-yellow-800">
-                <strong>Nota:</strong> O upload de imagens para o Supabase Storage será implementado em breve. 
-                Por enquanto, você pode configurar o preço e a chave PIX.
-              </p>
-            </div>
           </div>
         </Card>
 

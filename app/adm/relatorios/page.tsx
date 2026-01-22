@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import Container from '@/components/layouts/Container'
 import Card from '@/components/layouts/Card'
-import Table, { TableColumn } from '@/components/ui/Table'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
 import Toast from '@/components/ui/Toast'
 import { formatCurrency, formatDateTime, getDateRange, formatDateForAPI } from '@/lib/utils'
@@ -17,11 +16,14 @@ interface KPIs {
   flavorRanking: Array<{ name: string; quantity: number; total: number }>
 }
 
+type OrderStatus = 'created' | 'paid' | 'completed' | 'cancelled'
+
 export default function RelatoriosPage() {
   const [sales, setSales] = useState<AdminReportsResponse['sales']>([])
   const [kpis, setKpis] = useState<KPIs>({ totalSales: 0, totalPastries: 0, flavorRanking: [] })
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [updatingStatus, setUpdatingStatus] = useState<string | null>(null)
   
   // Filters
   const [selectedVendor, setSelectedVendor] = useState<string>('')
@@ -41,6 +43,53 @@ export default function RelatoriosPage() {
     fetchReports()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedVendor, selectedFlavor, selectedPeriod, currentPage])
+
+  const handleStatusChange = async (orderId: string, newStatus: OrderStatus) => {
+    try {
+      setUpdatingStatus(orderId)
+      
+      const response = await fetch(`/api/orders/${orderId}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ status: newStatus })
+      })
+
+      if (!response.ok) {
+        throw new Error('Falha ao atualizar status')
+      }
+
+      // Update local state
+      setSales(prevSales =>
+        prevSales.map(sale =>
+          sale.id === orderId ? { ...sale, status: newStatus } : sale
+        )
+      )
+
+      setError(null)
+    } catch (err) {
+      console.error('Error updating status:', err)
+      setError('Erro ao atualizar status do pedido')
+    } finally {
+      setUpdatingStatus(null)
+    }
+  }
+
+  const handleCompleteOrder = async (orderId: string) => {
+    await handleStatusChange(orderId, 'completed')
+  }
+
+  const handleCancelOrder = async (orderId: string) => {
+    if (!confirm('Tem certeza que deseja cancelar este pedido?')) {
+      return
+    }
+    await handleStatusChange(orderId, 'cancelled')
+  }
+
+  // Separate sales into active and completed
+  const activeSales = sales.filter(sale => sale.status !== 'completed')
+  const completedSales = sales.filter(sale => sale.status === 'completed')
 
   const fetchReports = async () => {
     try {
@@ -92,18 +141,21 @@ export default function RelatoriosPage() {
   }
 
   const calculateKPIs = (salesData: AdminReportsResponse['sales']) => {
-    // Total sales amount
-    const totalSales = salesData.reduce((sum, sale) => sum + sale.total_cents, 0)
+    // Filter out cancelled orders
+    const validSales = salesData.filter(sale => sale.status !== 'cancelled')
     
-    // Total pastries sold
-    const totalPastries = salesData.reduce((sum, sale) => {
+    // Total sales amount (excluding cancelled)
+    const totalSales = validSales.reduce((sum, sale) => sum + sale.total_cents, 0)
+    
+    // Total pastries sold (excluding cancelled)
+    const totalPastries = validSales.reduce((sum, sale) => {
       return sum + sale.items.reduce((itemSum, item) => itemSum + item.quantity, 0)
     }, 0)
     
-    // Flavor ranking
+    // Flavor ranking (excluding cancelled)
     const flavorMap = new Map<string, { quantity: number; total: number }>()
     
-    salesData.forEach(sale => {
+    validSales.forEach(sale => {
       sale.items.forEach(item => {
         const existing = flavorMap.get(item.flavor_name) || { quantity: 0, total: 0 }
         flavorMap.set(item.flavor_name, {
@@ -147,7 +199,7 @@ export default function RelatoriosPage() {
         </div>
 
         {/* KPIs */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           <Card>
             <div className="p-6">
               <h3 className="text-sm font-medium text-gray-500">Total de Vendas</h3>
@@ -186,7 +238,7 @@ export default function RelatoriosPage() {
           <div className="p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Filtros</h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {/* Vendor Filter */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -198,7 +250,7 @@ export default function RelatoriosPage() {
                     setSelectedVendor(e.target.value)
                     setCurrentPage(1)
                   }}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="">Todos</option>
                   {vendors.map((vendor: Vendor) => (
@@ -220,7 +272,7 @@ export default function RelatoriosPage() {
                     setSelectedFlavor(e.target.value)
                     setCurrentPage(1)
                   }}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="">Todos</option>
                   {flavors.map((flavor: Flavor) => (
@@ -242,7 +294,7 @@ export default function RelatoriosPage() {
                     setSelectedPeriod(e.target.value as any)
                     setCurrentPage(1)
                   }}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="all">Todos</option>
                   <option value="today">Hoje</option>
@@ -261,9 +313,9 @@ export default function RelatoriosPage() {
                     type="text"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                     placeholder="Nome, sabor..."
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="flex-1 px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   />
                   <button
                     onClick={handleSearch}
@@ -315,76 +367,196 @@ export default function RelatoriosPage() {
           </Card>
         )}
 
-        {/* Sales Table */}
+        {/* Active Orders Table */}
         <Card>
           <div className="p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Vendas</h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+              Pedidos em Andamento
+            </h2>
             
             {loading ? (
               <div className="flex justify-center py-12">
                 <LoadingSpinner size="lg" />
               </div>
-            ) : sales.length === 0 ? (
+            ) : activeSales.length === 0 ? (
               <div className="text-center py-12">
-                <p className="text-gray-500">Nenhuma venda encontrada</p>
+                <p className="text-gray-500">Nenhum pedido em andamento</p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto -mx-4 sm:mx-0">
+                <div className="inline-block min-w-full align-middle">
+                  <div className="overflow-hidden">
+                    <table className="min-w-full divide-y divide-gray-200">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th className="px-3 md:px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Data/Hora</th>
+                          <th className="px-3 md:px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Vendedor</th>
+                          <th className="px-3 md:px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Cliente</th>
+                          <th className="px-3 md:px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden sm:table-cell">Telefone</th>
+                          <th className="px-3 md:px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Itens</th>
+                          <th className="px-3 md:px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
+                          <th className="px-3 md:px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden md:table-cell">Pagamento</th>
+                          <th className="px-3 md:px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                          <th className="px-3 md:px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ações</th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white divide-y divide-gray-200">
+                        {activeSales.map((sale) => (
+                          <tr key={sale.id} className="hover:bg-gray-50">
+                            <td className="px-3 md:px-4 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm text-gray-900">
+                              {formatDateTime(sale.created_at)}
+                            </td>
+                            <td className="px-3 md:px-4 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm text-gray-900">
+                              {sale.vendor_name}
+                            </td>
+                            <td className="px-3 md:px-4 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm text-gray-900">
+                              {sale.customer_name}
+                            </td>
+                            <td className="px-3 md:px-4 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm text-gray-900 hidden sm:table-cell">
+                              {sale.customer_phone || 'N/A'}
+                            </td>
+                            <td className="px-3 md:px-4 py-3 md:py-4 text-xs md:text-sm text-gray-900">
+                              {sale.items.map((item, idx) => (
+                                <div key={idx}>
+                                  {item.quantity}x {item.flavor_name}
+                                </div>
+                              ))}
+                            </td>
+                            <td className="px-3 md:px-4 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm font-medium text-green-600">
+                              {formatCurrency(sale.total_cents)}
+                            </td>
+                            <td className="px-3 md:px-4 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm text-gray-900 hidden md:table-cell">
+                              {sale.payment_method}
+                            </td>
+                            <td className="px-3 md:px-4 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm">
+                              {sale.status === 'cancelled' ? (
+                                <span className="px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800">
+                                  Cancelado
+                                </span>
+                              ) : (
+                                <select
+                                  value={sale.status}
+                                  onChange={(e) => handleStatusChange(sale.id, e.target.value as OrderStatus)}
+                                  disabled={updatingStatus === sale.id}
+                                  className="px-2 md:px-3 py-1 md:py-1.5 text-xs font-medium rounded-md border border-gray-300 shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                  <option value="created">Pendente</option>
+                                  <option value="paid">Pago</option>
+                                  <option value="cancelled">Cancelado</option>
+                                </select>
+                              )}
+                            </td>
+                            <td className="px-3 md:px-4 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm">
+                              {sale.status === 'cancelled' ? (
+                                <span className="text-xs text-gray-500">-</span>
+                              ) : (
+                                <div className="flex flex-col sm:flex-row gap-1 sm:gap-2">
+                                  <button
+                                    onClick={() => handleCompleteOrder(sale.id)}
+                                    disabled={updatingStatus === sale.id}
+                                    className="px-2 md:px-3 py-1 bg-green-600 text-white text-xs font-medium rounded hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                                  >
+                                    {updatingStatus === sale.id ? 'Processando...' : 'Concluir'}
+                                  </button>
+                                  <button
+                                    onClick={() => handleCancelOrder(sale.id)}
+                                    disabled={updatingStatus === sale.id}
+                                    className="px-2 md:px-3 py-1 bg-red-600 text-white text-xs font-medium rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                                  >
+                                    Cancelar
+                                  </button>
+                                </div>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </Card>
+
+        {/* Completed Orders Table */}
+        <Card>
+          <div className="p-6">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+              Pedidos Concluídos
+            </h2>
+            
+            {loading ? (
+              <div className="flex justify-center py-12">
+                <LoadingSpinner size="lg" />
+              </div>
+            ) : completedSales.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-gray-500">Nenhum pedido concluído</p>
               </div>
             ) : (
               <>
-                <div className="overflow-x-auto">
-                  <Table
-                    columns={[
-                      { key: 'created_at', label: 'Data/Hora', sortable: true },
-                      { key: 'vendor_name', label: 'Vendedor', sortable: true },
-                      { key: 'customer_name', label: 'Cliente', sortable: true },
-                      { 
-                        key: 'items', 
-                        label: 'Itens',
-                        render: (_, row) => (
-                          <div className="text-sm">
-                            {row.items.map((item: any, idx: number) => (
-                              <div key={idx}>
-                                {item.quantity}x {item.flavor_name}
-                              </div>
-                            ))}
-                          </div>
-                        )
-                      },
-                      { 
-                        key: 'total_cents', 
-                        label: 'Total', 
-                        sortable: true,
-                        render: (value) => formatCurrency(value)
-                      },
-                      { key: 'payment_method', label: 'Pagamento', sortable: true },
-                      { 
-                        key: 'status', 
-                        label: 'Status',
-                        render: (value) => (
-                          <span
-                            className={`
-                              px-2 py-1 text-xs font-medium rounded-full
-                              ${value === 'paid' 
-                                ? 'bg-green-100 text-green-800' 
-                                : 'bg-yellow-100 text-yellow-800'
-                              }
-                            `}
-                          >
-                            {value === 'paid' ? 'Pago' : 'Pendente'}
-                          </span>
-                        )
-                      }
-                    ] as TableColumn<AdminReportsResponse['sales'][0]>[]}
-                    data={sales.map(sale => ({
-                      ...sale,
-                      created_at: formatDateTime(sale.created_at)
-                    }))}
-                  />
+                <div className="overflow-x-auto -mx-4 sm:mx-0">
+                  <div className="inline-block min-w-full align-middle">
+                    <div className="overflow-hidden">
+                      <table className="min-w-full divide-y divide-gray-200">
+                        <thead className="bg-gray-50">
+                          <tr>
+                            <th className="px-3 md:px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Data/Hora</th>
+                            <th className="px-3 md:px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Vendedor</th>
+                            <th className="px-3 md:px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Cliente</th>
+                            <th className="px-3 md:px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden sm:table-cell">Telefone</th>
+                            <th className="px-3 md:px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Itens</th>
+                            <th className="px-3 md:px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
+                            <th className="px-3 md:px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden md:table-cell">Pagamento</th>
+                            <th className="px-3 md:px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                          </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                          {completedSales.map((sale) => (
+                            <tr key={sale.id} className="hover:bg-gray-50">
+                              <td className="px-3 md:px-4 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm text-gray-900">
+                                {formatDateTime(sale.created_at)}
+                              </td>
+                              <td className="px-3 md:px-4 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm text-gray-900">
+                                {sale.vendor_name}
+                              </td>
+                              <td className="px-3 md:px-4 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm text-gray-900">
+                                {sale.customer_name}
+                              </td>
+                              <td className="px-3 md:px-4 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm text-gray-900 hidden sm:table-cell">
+                                {sale.customer_phone || 'N/A'}
+                              </td>
+                              <td className="px-3 md:px-4 py-3 md:py-4 text-xs md:text-sm text-gray-900">
+                                {sale.items.map((item, idx) => (
+                                  <div key={idx}>
+                                    {item.quantity}x {item.flavor_name}
+                                  </div>
+                                ))}
+                              </td>
+                              <td className="px-3 md:px-4 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm font-medium text-green-600">
+                                {formatCurrency(sale.total_cents)}
+                              </td>
+                              <td className="px-3 md:px-4 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm text-gray-900 hidden md:table-cell">
+                                {sale.payment_method}
+                              </td>
+                              <td className="px-3 md:px-4 py-3 md:py-4 whitespace-nowrap text-xs md:text-sm">
+                                <span className="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
+                                  Concluído
+                                </span>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Pagination */}
                 {totalPages > 1 && (
-                  <div className="mt-6 flex items-center justify-between">
-                    <p className="text-sm text-gray-600">
+                  <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <p className="text-sm text-gray-600 text-center sm:text-left">
                       Mostrando {((currentPage - 1) * itemsPerPage) + 1} a {Math.min(currentPage * itemsPerPage, totalCount)} de {totalCount} vendas
                     </p>
                     
@@ -392,19 +564,19 @@ export default function RelatoriosPage() {
                       <button
                         onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                         disabled={currentPage === 1}
-                        className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="px-3 md:px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         Anterior
                       </button>
                       
-                      <span className="px-4 py-2 text-sm text-gray-700">
+                      <span className="px-3 md:px-4 py-2 text-sm text-gray-700">
                         Página {currentPage} de {totalPages}
                       </span>
                       
                       <button
                         onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                         disabled={currentPage === totalPages}
-                        className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="px-3 md:px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         Próxima
                       </button>

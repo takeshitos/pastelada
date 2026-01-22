@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { authHelpers } from '@/lib/supabase'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
+import Logo from '@/components/ui/Logo'
 import Container from '@/components/layouts/Container'
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -101,9 +102,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <div className="flex items-center justify-between h-16">
             {/* Logo/Title */}
             <div className="flex items-center">
-              <h1 className="text-xl font-bold text-gray-900">
-                Painel Admin - Pastelada
-              </h1>
+              <Logo size="sm" />
+              <span className="ml-3 text-sm font-medium text-gray-500 hidden sm:inline">
+                | Painel Admin
+              </span>
             </div>
 
             {/* Navigation Links */}

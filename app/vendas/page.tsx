@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { getVendorSession, formatCurrency, formatDateTime } from '@/lib/utils'
 import Container from '@/components/layouts/Container'
 import Card from '@/components/layouts/Card'
+import Logo from '@/components/ui/Logo'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
 import Toast from '@/components/ui/Toast'
 import type { VendorSalesResponse, ErrorResponse } from '@/types/api'
@@ -24,6 +25,7 @@ export default function VendorSalesPage() {
   const [periodFilter, setPeriodFilter] = useState<PeriodFilter>('all')
   const [searchQuery, setSearchQuery] = useState('')
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set())
+  const [updatingStatus, setUpdatingStatus] = useState<string | null>(null)
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info'; show: boolean }>({
     message: '',
     type: 'info',
@@ -139,6 +141,42 @@ export default function VendorSalesPage() {
     })
   }
 
+  const handleCancelOrder = async (orderId: string) => {
+    if (!confirm('Tem certeza que deseja cancelar este pedido?')) {
+      return
+    }
+
+    try {
+      setUpdatingStatus(orderId)
+      
+      const response = await fetch(`/api/orders/${orderId}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ status: 'cancelled' })
+      })
+
+      if (!response.ok) {
+        throw new Error('Falha ao cancelar pedido')
+      }
+
+      // Update local state
+      setSales(prevSales =>
+        prevSales.map(sale =>
+          sale.id === orderId ? { ...sale, status: 'cancelled' } : sale
+        )
+      )
+
+      showToast('Pedido cancelado com sucesso', 'success')
+    } catch (err) {
+      console.error('Error cancelling order:', err)
+      showToast('Erro ao cancelar pedido', 'error')
+    } finally {
+      setUpdatingStatus(null)
+    }
+  }
+
   const getFilteredSales = () => {
     if (!searchQuery.trim()) return sales
 
@@ -164,7 +202,9 @@ export default function VendorSalesPage() {
     const statusConfig = {
       paid: { label: 'Pago', color: 'bg-green-100 text-green-800' },
       pending: { label: 'Pendente', color: 'bg-yellow-100 text-yellow-800' },
-      created: { label: 'Criado', color: 'bg-blue-100 text-blue-800' }
+      created: { label: 'Criado', color: 'bg-blue-100 text-blue-800' },
+      cancelled: { label: 'Cancelado', color: 'bg-red-100 text-red-800' },
+      completed: { label: 'Concluído', color: 'bg-blue-100 text-blue-800' }
     }
     
     const config = statusConfig[status as keyof typeof statusConfig] || { 
@@ -214,6 +254,11 @@ export default function VendorSalesPage() {
   return (
     <main className="min-h-screen bg-gray-50 py-4 md:py-8">
       <Container size="xl">
+        {/* Logo */}
+        <div className="flex justify-center mb-6">
+          <Logo size="md" />
+        </div>
+
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 md:mb-8 space-y-4 md:space-y-0">
           <div>
@@ -295,7 +340,7 @@ export default function VendorSalesPage() {
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Buscar por cliente, sabor, método..."
                   className="
-                    w-full px-4 py-2 border border-gray-300 rounded-md
+                    w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-white
                     focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
                   "
                 />
@@ -334,6 +379,9 @@ export default function VendorSalesPage() {
                       Cliente
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Telefone
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Total
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -359,6 +407,9 @@ export default function VendorSalesPage() {
                         <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
                           {sale.customer_name || 'N/A'}
                         </td>
+                        <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                          {sale.customer_phone || 'N/A'}
+                        </td>
                         <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-green-600">
                           {formatCurrency(sale.total_cents)}
                         </td>
@@ -369,12 +420,23 @@ export default function VendorSalesPage() {
                           {getStatusBadge(sale.status)}
                         </td>
                         <td className="px-4 py-4 whitespace-nowrap text-sm">
-                          <button
-                            onClick={() => toggleRowExpansion(sale.id)}
-                            className="text-blue-600 hover:text-blue-800 font-medium"
-                          >
-                            {isExpanded ? 'Ocultar' : 'Ver itens'}
-                          </button>
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => toggleRowExpansion(sale.id)}
+                              className="text-blue-600 hover:text-blue-800 font-medium"
+                            >
+                              {isExpanded ? 'Ocultar' : 'Ver itens'}
+                            </button>
+                            {sale.status !== 'cancelled' && sale.status !== 'completed' && (
+                              <button
+                                onClick={() => handleCancelOrder(sale.id)}
+                                disabled={updatingStatus === sale.id}
+                                className="text-red-600 hover:text-red-800 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                              >
+                                {updatingStatus === sale.id ? 'Cancelando...' : 'Cancelar'}
+                              </button>
+                            )}
+                          </div>
                         </td>
                       </tr>
                     )

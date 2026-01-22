@@ -97,12 +97,12 @@ export default function CustomerModal({ isOpen, onClose, onSubmit, isLoading = f
             onChange={(e) => handleInputChange('name', e.target.value)}
             disabled={isLoading}
             className={`
-              w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500
+              w-full px-4 py-2 border rounded-md shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
               ${errors.name 
                 ? 'border-red-300 focus:border-red-500 focus:ring-red-500' 
-                : 'border-gray-300 focus:border-blue-500'
+                : 'border-gray-300'
               }
-              ${isLoading ? 'bg-gray-50 cursor-not-allowed' : 'bg-white'}
+              ${isLoading ? 'bg-gray-50 cursor-not-allowed' : ''}
             `}
             placeholder="Digite o nome do cliente"
             autoFocus
@@ -124,12 +124,12 @@ export default function CustomerModal({ isOpen, onClose, onSubmit, isLoading = f
             onChange={(e) => handleInputChange('phone', e.target.value)}
             disabled={isLoading}
             className={`
-              w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500
+              w-full px-4 py-2 border rounded-md shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
               ${errors.phone 
                 ? 'border-red-300 focus:border-red-500 focus:ring-red-500' 
-                : 'border-gray-300 focus:border-blue-500'
+                : 'border-gray-300'
               }
-              ${isLoading ? 'bg-gray-50 cursor-not-allowed' : 'bg-white'}
+              ${isLoading ? 'bg-gray-50 cursor-not-allowed' : ''}
             `}
             placeholder="Digite apenas números"
           />

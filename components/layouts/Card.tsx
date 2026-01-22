@@ -52,7 +52,7 @@ export default function Card({
   return (
     <div
       className={`
-        bg-white rounded-lg border border-gray-200
+        bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-700
         ${getShadowClasses()}
         ${hoverClasses}
         ${className}
@@ -60,14 +60,14 @@ export default function Card({
     >
       {/* Header */}
       {(title || subtitle || actions) && (
-        <div className={`border-b border-gray-200 ${padding !== 'none' ? 'px-6 py-4' : 'p-4'}`}>
+        <div className={`border-b border-neutral-200 dark:border-neutral-700 ${padding !== 'none' ? 'px-6 py-4' : 'p-4'}`}>
           <div className="flex items-center justify-between">
             <div>
               {title && (
-                <h3 className="text-lg font-medium text-gray-900">{title}</h3>
+                <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-50">{title}</h3>
               )}
               {subtitle && (
-                <p className="mt-1 text-sm text-gray-500">{subtitle}</p>
+                <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">{subtitle}</p>
               )}
             </div>
             {actions && (

@@ -6,6 +6,7 @@ import { getVendorSession, clearVendorSession, formatCurrency } from '@/lib/util
 import { useActiveFlavorsRealtime, useAppSettingsRealtime } from '@/lib/hooks'
 import Container from '@/components/layouts/Container'
 import Card from '@/components/layouts/Card'
+import Logo from '@/components/ui/Logo'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
 import Toast from '@/components/ui/Toast'
 import CustomerModal from '@/components/sales/CustomerModal'
@@ -168,7 +169,7 @@ export default function SalesPage() {
             quantity
           })),
         payment_method: method,
-        mark_as_paid: true // Always mark as paid for now
+        mark_as_paid: method === 'PIX' // PIX is paid immediately, LOCAL is pending
       }
 
       // Call API to create order
@@ -271,6 +272,11 @@ export default function SalesPage() {
   return (
     <main className="min-h-screen bg-gray-50 py-4 md:py-8">
       <Container size="lg">
+        {/* Logo */}
+        <div className="flex justify-center mb-6">
+          <Logo size="md" />
+        </div>
+
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 md:mb-8 space-y-4 md:space-y-0">
           <div>
@@ -452,7 +458,8 @@ export default function SalesPage() {
           onClose={() => setPixModalOpen(false)}
           total={totalAmount}
           items={getCartItems()}
-          qrCodeUrl={settings?.pix_qr_image_path ? `/api/storage/${settings.pix_qr_image_path}` : undefined}
+          qrCodePath={settings?.pix_qr_image_path || undefined}
+          pixKey={settings?.pix_key_text || undefined}
           onConfirmPayment={() => handleConfirmPayment('PIX')}
           isLoading={processingPayment}
         />

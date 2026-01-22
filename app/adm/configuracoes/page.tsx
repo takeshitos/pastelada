@@ -6,7 +6,6 @@ import Container from '@/components/layouts/Container'
 import Card from '@/components/layouts/Card'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
 import Toast from '@/components/ui/Toast'
-import { formatCurrency, reaisToCents } from '@/lib/utils'
 import type { AppSettings } from '@/types/database'
 import type { ErrorResponse } from '@/types/api'
 
@@ -14,8 +13,6 @@ export default function SettingsPage() {
   const [settings, setSettings] = useState<AppSettings | null>(null)
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
-  const [priceReais, setPriceReais] = useState('')
-  const [priceError, setPriceError] = useState('')
   const [pixKey, setPixKey] = useState('')
   const [qrCodeFile, setQrCodeFile] = useState<File | null>(null)
   const [qrCodePreview, setQrCodePreview] = useState<string | null>(null)
@@ -51,10 +48,6 @@ export default function SettingsPage() {
       const fetchedSettings = data.settings as AppSettings
       setSettings(fetchedSettings)
       
-      // Convert cents to reais for display
-      const reais = fetchedSettings.pastel_price_cents / 100
-      setPriceReais(reais.toFixed(2))
-      
       setPixKey(fetchedSettings.pix_key_text || '')
       
       if (fetchedSettings.pix_qr_image_path) {
@@ -71,23 +64,6 @@ export default function SettingsPage() {
     } finally {
       setLoading(false)
     }
-  }
-
-  const validatePrice = (): boolean => {
-    const price = parseFloat(priceReais)
-    
-    if (isNaN(price)) {
-      setPriceError('Preço inválido')
-      return false
-    }
-    
-    if (price < 0) {
-      setPriceError('Preço não pode ser negativo')
-      return false
-    }
-    
-    setPriceError('')
-    return true
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -120,16 +96,9 @@ export default function SettingsPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!validatePrice()) {
-      return
-    }
-
     setSubmitting(true)
 
     try {
-      // Convert reais to cents
-      const priceCents = reaisToCents(parseFloat(priceReais))
-
       let qrCodePath: string | null = null
 
       // Upload QR code if a new file was selected
@@ -153,7 +122,6 @@ export default function SettingsPage() {
 
       // Update settings
       const updateBody: any = {
-        pastel_price_cents: priceCents,
         pix_key_text: pixKey.trim() || null
       }
 
@@ -205,63 +173,17 @@ export default function SettingsPage() {
           Configurações do Sistema
         </h1>
         <p className="text-gray-600">
-          Gerencie o preço dos pastéis e informações de pagamento PIX
+          Gerencie informações de pagamento PIX
         </p>
+        <div className="mt-4 bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <p className="text-sm text-blue-800">
+            <strong>💡 Dica:</strong> Os preços dos pastéis agora são configurados individualmente para cada sabor. 
+            Acesse <a href="/adm/sabores" className="font-medium underline hover:text-blue-900">Gestão de Sabores</a> para definir os preços.
+          </p>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Price Settings */}
-        <Card title="Preço do Pastel">
-          <div className="space-y-4">
-            <div>
-              <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-1">
-                Preço (R$) *
-              </label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
-                  R$
-                </span>
-                <input
-                  id="price"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  value={priceReais}
-                  onChange={(e) => {
-                    setPriceReais(e.target.value)
-                    if (priceError) setPriceError('')
-                  }}
-                  disabled={submitting}
-                  className={`
-                    w-full pl-10 pr-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500
-                    ${priceError 
-                      ? 'border-red-300 focus:border-red-500 focus:ring-red-500' 
-                      : 'border-gray-300 focus:border-blue-500'
-                    }
-                    ${submitting ? 'bg-gray-50 cursor-not-allowed' : 'bg-white'}
-                  `}
-                  placeholder="0.00"
-                />
-              </div>
-              {priceError && (
-                <p className="mt-1 text-sm text-red-600">{priceError}</p>
-              )}
-              {settings && !priceError && (
-                <p className="mt-1 text-sm text-gray-500">
-                  Preço atual: {formatCurrency(settings.pastel_price_cents)}
-                </p>
-              )}
-            </div>
-
-            <div className="bg-blue-50 p-4 rounded-md">
-              <p className="text-sm text-blue-800">
-                <strong>Nota:</strong> Este preço é usado como padrão ao criar novos sabores. 
-                Cada sabor pode ter seu próprio preço individual configurado na página de Sabores.
-              </p>
-            </div>
-          </div>
-        </Card>
-
         {/* PIX Settings */}
         <Card title="Configurações PIX">
           <div className="space-y-6">

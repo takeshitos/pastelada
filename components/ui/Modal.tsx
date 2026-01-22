@@ -67,7 +67,7 @@ export default function Modal({
 
   return (
     <div
-      className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-75 flex items-center justify-center z-50 p-4"
+      className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-75 flex items-center justify-center z-50 p-2 sm:p-4 overflow-y-auto"
       onClick={handleOverlayClick}
     >
       <div
@@ -78,18 +78,20 @@ export default function Modal({
           ${className}
           transform transition-all duration-200 ease-out
           animate-in fade-in-0 zoom-in-95
+          max-h-[95vh] overflow-y-auto
+          my-auto
         `}
       >
         {/* Header */}
         {(title || showCloseButton) && (
-          <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+          <div className="flex items-center justify-between p-3 sm:p-4 border-b border-gray-200 dark:border-gray-700 sticky top-0 bg-white dark:bg-gray-800 z-10">
             {title && (
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{title}</h2>
+              <h2 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100">{title}</h2>
             )}
             {showCloseButton && (
               <button
                 onClick={onClose}
-                className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors p-1"
+                className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors p-1 ml-2"
                 aria-label="Fechar modal"
               >
                 <svg
@@ -111,7 +113,7 @@ export default function Modal({
         )}
 
         {/* Content */}
-        <div className="p-4">
+        <div className="p-3 sm:p-4">
           {children}
         </div>
       </div>

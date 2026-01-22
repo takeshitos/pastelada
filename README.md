@@ -137,3 +137,33 @@ Consulte `.kiro/specs/pastelada-sales-system/` para detalhes completos dos requi
 ## 🚀 Deploy
 
 Para instruções de deploy em produção (Vercel), consulte o **[Guia de Deploy](docs/DEPLOYMENT.md)**.
+
+### ⚠️ Problema Comum: Dados Não Atualizam no Vercel
+
+Se após o deploy os dados não estiverem atualizando, você precisa configurar as variáveis de ambiente do Supabase no Vercel.
+
+**📋 Siga este guia passo a passo:** [**CHECKLIST-VERCEL.md**](CHECKLIST-VERCEL.md)
+
+**Outros recursos úteis:**
+- 📖 [CONFIGURACAO-VERCEL.md](CONFIGURACAO-VERCEL.md) - Guia detalhado
+- 🎯 [PROXIMOS-PASSOS.md](PROXIMOS-PASSOS.md) - Status e próximos passos
+- 📊 [RESUMO-SITUACAO-ATUAL.md](RESUMO-SITUACAO-ATUAL.md) - Visão geral completa
+
+**Verificar configuração local:**
+```bash
+npm run verify
+```
+
+## 🔍 Verificação de Setup
+
+Execute o script de verificação para garantir que tudo está configurado:
+
+```bash
+node verificar-setup.js
+```
+
+Este script verifica:
+- ✅ Variáveis de ambiente configuradas
+- ✅ Arquivo .env.local existe
+- ✅ Valores não são placeholders
+- ✅ Todas as credenciais necessárias presentes

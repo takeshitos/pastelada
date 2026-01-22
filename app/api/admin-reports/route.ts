@@ -4,6 +4,7 @@ import { ErrorResponse } from '@/types/api'
 
 // Force dynamic rendering for this route
 export const dynamic = 'force-dynamic'
+export const revalidate = 0 // Disable caching
 
 export interface AdminReportsResponse {
   sales: Array<{

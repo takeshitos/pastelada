@@ -101,10 +101,17 @@ export default function VendorSalesPage() {
         vendor_id: vendorSession.vendor.id,
         limit: '100',
         offset: '0',
+        _t: Date.now().toString(), // Cache buster
         ...dateRange
       })
 
-      const response = await fetch(`/api/vendor-sales?${params.toString()}`)
+      const response = await fetch(`/api/vendor-sales?${params.toString()}`, {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      })
       const data = await response.json()
 
       if (!response.ok) {
@@ -301,9 +308,22 @@ export default function VendorSalesPage() {
             <div className="space-y-4">
               {/* Period Filter */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Período
-                </label>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Período
+                  </label>
+                  <button
+                    onClick={() => fetchSales()}
+                    disabled={salesLoading}
+                    className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    title="Atualizar dados"
+                  >
+                    <svg className={`w-4 h-4 ${salesLoading ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    {salesLoading ? 'Atualizando...' : 'Atualizar'}
+                  </button>
+                </div>
                 <div className="flex flex-wrap gap-2">
                   {[
                     { value: 'today' as PeriodFilter, label: 'Hoje' },

@@ -160,7 +160,15 @@ export async function GET(request: NextRequest) {
       total_count: totalCount || 0
     }
 
-    return NextResponse.json(response, { status: 200 })
+    return NextResponse.json(response, { 
+      status: 200,
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+        'Surrogate-Control': 'no-store'
+      }
+    })
 
   } catch (error) {
     console.error('Admin reports fetch error:', error)

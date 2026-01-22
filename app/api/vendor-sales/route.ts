@@ -4,6 +4,7 @@ import { VendorSalesResponse, ErrorResponse } from '@/types/api'
 
 // Force dynamic rendering for this route
 export const dynamic = 'force-dynamic'
+export const revalidate = 0 // Disable caching
 
 export async function GET(request: NextRequest) {
   try {
@@ -120,7 +121,15 @@ export async function GET(request: NextRequest) {
       total_count: totalCount || 0
     }
 
-    return NextResponse.json(response, { status: 200 })
+    return NextResponse.json(response, { 
+      status: 200,
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+        'Surrogate-Control': 'no-store'
+      }
+    })
 
   } catch (error) {
     console.error('Vendor sales fetch error:', error)

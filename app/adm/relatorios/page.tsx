@@ -118,8 +118,15 @@ export default function RelatoriosPage() {
       
       params.append('limit', itemsPerPage.toString())
       params.append('offset', ((currentPage - 1) * itemsPerPage).toString())
+      params.append('_t', Date.now().toString()) // Cache buster
 
-      const response = await fetch(`/api/admin-reports?${params.toString()}`)
+      const response = await fetch(`/api/admin-reports?${params.toString()}`, {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      })
       
       if (!response.ok) {
         throw new Error('Failed to fetch reports')

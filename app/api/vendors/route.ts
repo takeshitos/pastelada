@@ -5,6 +5,7 @@ import { ErrorResponse } from '@/types/api'
 
 // Force dynamic rendering for this route
 export const dynamic = 'force-dynamic'
+export const revalidate = 0 // Disable caching
 
 // GET /api/vendors - Get all vendors (or only active ones)
 export async function GET(request: NextRequest) {
@@ -31,7 +32,14 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    return NextResponse.json({ vendors })
+    return NextResponse.json({ vendors }, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+        'Surrogate-Control': 'no-store'
+      }
+    })
   } catch (error) {
     console.error('Unexpected error:', error)
     return NextResponse.json<ErrorResponse>(
